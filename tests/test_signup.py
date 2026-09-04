@@ -37,3 +37,20 @@ def test_duplicate_signup_is_case_insensitive():
 
     assert second_response.status_code == 400
     assert "already signed up" in second_response.json()["detail"].lower()
+
+
+def test_participant_can_be_removed():
+    activity_name = "Science Club"
+    email = "remove.me@mergington.edu"
+
+    signup_response = client.post(
+        f"/activities/{activity_name}/signup?email={email}",
+    )
+    assert signup_response.status_code == 200
+
+    delete_response = client.delete(
+        f"/activities/{activity_name}/signup?email={email}",
+    )
+
+    assert delete_response.status_code == 200
+    assert delete_response.json()["message"].startswith("Removed")
